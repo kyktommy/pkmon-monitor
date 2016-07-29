@@ -2,7 +2,7 @@
 
 1. npm install
 2. edit ip
-3. node server.js
+3. node index.js
 
 #web
 
