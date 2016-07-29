@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { observable } from 'mobx'
 import { observer } from 'mobx-react';
 import DevTools from 'mobx-react-devtools';
 import moment from 'moment'
@@ -52,6 +53,8 @@ const LocationPKInfo = (props) => {
 
 @observer
 class App extends Component {
+  @observable showAll = false
+
   render() {
     const { locations, results, lastUpdates, unqiuePks } = appState
 
@@ -63,6 +66,21 @@ class App extends Component {
           <h5>All</h5>
           <PKList pks={unqiuePks} />
         </div>
+        <hr />
+        <button onClick={() => this.showAll = !this.showAll}>Toggle Show All</button>
+        {
+          this.showAll &&
+          results.map((pks, i) => {
+            return (
+              <LocationPKInfo 
+                key={i} 
+                location={locations[i]}
+                pks={results[i]}
+                lastUpdated={lastUpdates[i]}
+              />
+            )
+          })
+        }
         <Alert 
           position='bottom-right'
           stack={{limit: 3}} 
