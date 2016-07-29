@@ -6,7 +6,7 @@ module.exports = {
   entry: [
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://localhost:3000',
-    'webpack/hot/only-dev-server',
+    'webpack/hot/only-dev-server', 
     './src/index'
   ],
   output: {
@@ -18,13 +18,16 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin()
   ],
   resolve: {
-    extensions: ['', '.js', '.jsx']
+    extensions: ['', '.js', '.jsx', 'css']
   },
   module: {
     loaders: [{
       test: /\.jsx?$/,
       loaders: ['babel'],
       include: path.join(__dirname, 'src')
+    }, {
+      test: /\.css$/, 
+      loader: 'style-loader!css-loader'
     }]
   }
 };

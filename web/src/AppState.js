@@ -1,8 +1,8 @@
-import { observable } from 'mobx'
+import { observable, computed } from 'mobx'
 import axios from 'axios'
 import lodash from 'lodash'
 
-const GET_PKMONS = 'http://localhost:8989/map/data'
+const GET_PKMONS = 'http://192.168.2.197:8989/map/data'
 
 class AppState {
   @observable locations = [
@@ -16,9 +16,19 @@ class AppState {
     [22.373968007511465,114.1179084777832], // tsuen wan
     [22.446452940412026,114.03486728668213], // yuen long
     [22.39382875106517,113.97268295288086], // tuen mun
+    [22.312125620053337,114.22639846801758], // kwun tong
   ]
   @observable results = new Array(this.locations.length)
   @observable lastUpdates = new Array(this.locations.length)
+
+  @computed get unqiuePks() {
+    const pks = this.results.filter((pk) => pk)
+    if (pks.length > 0) {
+      const flattened = this.results.reduce((sum, item) => sum.concat(item.concat([])), [])
+      return lodash.uniqBy(flattened, (pk) => pk.pokemonId)
+    }
+    return []
+  }
 
   getAllPkmons(idx) {
     const [ lat, lng ] = this.locations[idx]
@@ -30,4 +40,4 @@ class AppState {
   }
 }
 
-export default AppState
+export default new AppState()

@@ -1,11 +1,10 @@
 const Hapi = require('hapi')
 const request = require('request')
-const corsHeader = require('hapi-cors-headers')
 
 const server = new Hapi.Server()
 
 server.connection({
-  host: 'localhost',
+  host: '0.0.0.0',
   port: 8989,
   routes: {
     cors: true
@@ -13,7 +12,6 @@ server.connection({
 })
 
 server.route({
-
   method: 'GET',
   path: '/map/data/{lat}/{lng}',
   handler: (req, reply) => {
@@ -21,6 +19,7 @@ server.route({
     request(
       'https://pokevision.com/map/data/' + lat + '/' + lng, 
       (err, res, body) => {
+        if (err) return console.error(err)
         reply(body).code(200)
       }
     )

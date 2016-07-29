@@ -1,11 +1,14 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
-import AppState from './AppState';
 import App from './App';
 import { autorunAsync } from 'mobx'
 
-const appState = new AppState();
+import 'react-s-alert/dist/s-alert-default.css'
+import 'react-s-alert/dist/s-alert-css-effects/slide.css'
+import './style.css'
+
+import appState from './AppState'
 
 function getAllPkmonsInAllLocations() {
   const { locations } = appState
@@ -21,14 +24,14 @@ function getAllPkmonsInAllLocationsAsync() {
     getAllPkmonsInAllLocations()
     // next loop
     getAllPkmonsInAllLocationsAsync()
-  }, 30 * 1000)
+  }, 1 * 60 * 1000)
 }
 
 getAllPkmonsInAllLocationsAsync()
 
 render(
   <AppContainer>
-    <App appState={appState} />
+    <App />
   </AppContainer>,
   document.getElementById('root')
 );
@@ -39,7 +42,7 @@ if (module.hot) {
 
     render(
       <AppContainer>
-        <NextApp appState={appState} />
+        <NextApp />
       </AppContainer>,
       document.getElementById('root')
     );
