@@ -7,7 +7,7 @@ const server = new Hapi.Server()
 
 server.connection({
   host: '0.0.0.0',
-  port: 8989,
+  port: process.env.PORT || 8989,
   routes: {
     cors: true,
     files: {
@@ -30,6 +30,14 @@ server.route({
         reply(body).code(200)
       }
     )
+  }
+})
+
+server.route({
+  method: 'GET',
+  path: '/',
+  handler: {
+    file: 'index.html'
   }
 })
 
