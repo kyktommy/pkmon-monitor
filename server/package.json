@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "build": "babel index.js --out-file server.js",
+    "copy:static": "rm -rf static && cp -r ../web/static static",
+    "build": "npm run copy:static && babel index.js --out-file server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

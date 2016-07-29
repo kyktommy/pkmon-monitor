@@ -13,7 +13,7 @@ server.connection({
   routes: {
     cors: true,
     files: {
-      relativeTo: path.join(__dirname, '..', 'web', 'static')
+      relativeTo: path.join(__dirname, 'static')
     }
   }
 });
