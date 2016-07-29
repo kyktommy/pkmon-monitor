@@ -1,7 +1,9 @@
 // modify this
 
 export default {
-  GET_PKMONS_API: 'http://192.168.2.197:8989/map/data',
+  GET_PKMONS_API: '/map/data',
+  // development use
+  // GET_PKMONS_API: 'http://locolhost:8989/map/data',
   LOCATIONS: [
     [22.320343743143248,114.16914939880371], // hk mk east
     [22.305018737102014,114.17163848876953], // jordan

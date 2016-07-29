@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node server.js",
     "lint": "eslint src",
-    "build": "webpack --config webpack.config.prod.js && cp -r static ../server/static"
+    "build": "webpack --config webpack.config.prod.js"
   },
   "repository": {
     "type": "git",
