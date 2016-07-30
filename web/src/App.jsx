@@ -8,9 +8,10 @@ import Clipboard from 'clipboard'
 
 import appState from './AppState';
 
+// clip location
 const clipPkMonLocation = new Clipboard('.pkmon')
 clipPkMonLocation.on('success', (e) => {
-  Alert.success('cliped')
+  Alert.success('cliped location', { timeout:  2000 })
   e.clearSelection()
 })
 
@@ -30,7 +31,9 @@ const PKList = (props) => {
             className="pkmon" 
             data-clipboard-text={`${pk.latitude},${pk.longitude}`}
           >
-            <PKImage pkId={pk.pokemonId} />
+            <a href={`https://pokevision.com/#/@${pk.latitude},${pk.longitude}`} target="_blank">
+              <PKImage pkId={pk.pokemonId} />
+            </a>
           </span>
         ) 
       }
@@ -63,7 +66,7 @@ class App extends Component {
     return (
       <div>
         <div>
-          <h5>All</h5>
+          <h5>All PK</h5>
           <PKList pks={unqiuePks} />
         </div>
         <hr />

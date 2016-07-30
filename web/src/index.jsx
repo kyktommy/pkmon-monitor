@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import App from './App';
 import { autorunAsync } from 'mobx'
+import config from './config'
 
 import 'react-s-alert/dist/s-alert-default.css'
 import 'react-s-alert/dist/s-alert-css-effects/slide.css'
@@ -24,7 +25,7 @@ function getAllPkmonsInAllLocationsAsync() {
     getAllPkmonsInAllLocations()
     // next loop
     getAllPkmonsInAllLocationsAsync()
-  }, 1 * 60 * 1000)
+  }, config.REFRESH_TIME)
 }
 
 getAllPkmonsInAllLocationsAsync()

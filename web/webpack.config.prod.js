@@ -12,6 +12,9 @@ module.exports = {
     publicPath: '/static/'
   },
   plugins: [
+    new webpack.DefinePlugin({
+      PRODUCTION: JSON.stringify(true),
+    })
   ],
   resolve: {
     extensions: ['', '.js', '.jsx', 'css']

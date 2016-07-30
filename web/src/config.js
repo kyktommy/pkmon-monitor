@@ -1,9 +1,10 @@
 // modify this
 
+const API = PRODUCTION ? '/map/data' :'http://localhost:8989/map/data'
+
 export default {
-  GET_PKMONS_API: '/map/data',
-  // development use
-  // GET_PKMONS_API: 'http://locolhost:8989/map/data',
+  GET_PKMONS_API: API,
+  REFRESH_TIME: 1 * 60 * 1000,
   LOCATIONS: [
     [22.320343743143248,114.16914939880371], // hk mk east
     [22.305018737102014,114.17163848876953], // jordan

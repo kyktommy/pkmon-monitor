@@ -67,6 +67,10 @@
 	
 	var _mobx = __webpack_require__(185);
 	
+	var _config = __webpack_require__(332);
+	
+	var _config2 = _interopRequireDefault(_config);
+	
 	__webpack_require__(333);
 	
 	__webpack_require__(337);
@@ -94,7 +98,7 @@
 	    getAllPkmonsInAllLocations();
 	    // next loop
 	    getAllPkmonsInAllLocationsAsync();
-	  }, 1 * 60 * 1000);
+	  }, _config2.default.REFRESH_TIME);
 	}
 	
 	getAllPkmonsInAllLocationsAsync();
@@ -116,19 +120,6 @@
 	    ), document.getElementById('root'));
 	  });
 	}
-	;
-	
-	(function () {
-	  if (typeof __REACT_HOT_LOADER__ === 'undefined') {
-	    return;
-	  }
-	
-	  __REACT_HOT_LOADER__.register(getAllPkmonsInAllLocations, 'getAllPkmonsInAllLocations', '/Users/kyktommy/Desktop/pkmon_monitor/web/src/index.jsx');
-	
-	  __REACT_HOT_LOADER__.register(getAllPkmonsInAllLocationsAsync, 'getAllPkmonsInAllLocationsAsync', '/Users/kyktommy/Desktop/pkmon_monitor/web/src/index.jsx');
-	})();
-
-	;
 
 /***/ },
 /* 2 */
@@ -22458,9 +22449,10 @@
 	  throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
 	}
 	
+	// clip location
 	var clipPkMonLocation = new _clipboard2.default('.pkmon');
 	clipPkMonLocation.on('success', function (e) {
-	  _reactSAlert2.default.success('cliped');
+	  _reactSAlert2.default.success('cliped location', { timeout: 2000 });
 	  e.clearSelection();
 	});
 	
@@ -22484,7 +22476,11 @@
 	          className: 'pkmon',
 	          'data-clipboard-text': pk.latitude + ',' + pk.longitude
 	        },
-	        _react2.default.createElement(PKImage, { pkId: pk.pokemonId })
+	        _react2.default.createElement(
+	          'a',
+	          { href: 'https://pokevision.com/#/@' + pk.latitude + ',' + pk.longitude, target: '_blank' },
+	          _react2.default.createElement(PKImage, { pkId: pk.pokemonId })
+	        )
 	      );
 	    })
 	  );
@@ -22553,7 +22549,7 @@
 	          _react2.default.createElement(
 	            'h5',
 	            null,
-	            'All'
+	            'All PK'
 	          ),
 	          _react2.default.createElement(PKList, { pks: unqiuePks })
 	        ),
@@ -22591,29 +22587,7 @@
 	
 	;
 	
-	var _default = App;
-	exports.default = _default;
-	;
-	
-	(function () {
-	  if (typeof __REACT_HOT_LOADER__ === 'undefined') {
-	    return;
-	  }
-	
-	  __REACT_HOT_LOADER__.register(clipPkMonLocation, 'clipPkMonLocation', '/Users/kyktommy/Desktop/pkmon_monitor/web/src/App.jsx');
-	
-	  __REACT_HOT_LOADER__.register(PKImage, 'PKImage', '/Users/kyktommy/Desktop/pkmon_monitor/web/src/App.jsx');
-	
-	  __REACT_HOT_LOADER__.register(PKList, 'PKList', '/Users/kyktommy/Desktop/pkmon_monitor/web/src/App.jsx');
-	
-	  __REACT_HOT_LOADER__.register(LocationPKInfo, 'LocationPKInfo', '/Users/kyktommy/Desktop/pkmon_monitor/web/src/App.jsx');
-	
-	  __REACT_HOT_LOADER__.register(App, 'App', '/Users/kyktommy/Desktop/pkmon_monitor/web/src/App.jsx');
-	
-	  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/kyktommy/Desktop/pkmon_monitor/web/src/App.jsx');
-	})();
-
-	;
+	exports.default = App;
 
 /***/ },
 /* 185 */
@@ -41522,23 +41496,7 @@
 	    return new Array(this.locations.length);
 	  }
 	}), _applyDecoratedDescriptor(_class.prototype, 'unqiuePks', [_mobx.computed], Object.getOwnPropertyDescriptor(_class.prototype, 'unqiuePks'), _class.prototype)), _class);
-	
-	var _default = new AppState();
-	
-	exports.default = _default;
-	;
-	
-	(function () {
-	  if (typeof __REACT_HOT_LOADER__ === 'undefined') {
-	    return;
-	  }
-	
-	  __REACT_HOT_LOADER__.register(AppState, 'AppState', '/Users/kyktommy/Desktop/pkmon_monitor/web/src/AppState.js');
-	
-	  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/kyktommy/Desktop/pkmon_monitor/web/src/AppState.js');
-	})();
-
-	;
+	exports.default = new AppState();
 
 /***/ },
 /* 309 */
@@ -59477,17 +59435,20 @@
 
 /***/ },
 /* 332 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var _default = {
-	  GET_PKMONS_API: '/map/data',
-	  // development use
-	  // GET_PKMONS_API: 'http://locolhost:8989/map/data',
+	// modify this
+	
+	var API =  true ? '/map/data' : 'http://localhost:8989/map/data';
+	
+	exports.default = {
+	  GET_PKMONS_API: API,
+	  REFRESH_TIME: 1 * 60 * 1000,
 	  LOCATIONS: [[22.320343743143248, 114.16914939880371], // hk mk east
 	  [22.305018737102014, 114.17163848876953], // jordan
 	  [22.298705615987014, 114.17245388031006], // tst
@@ -59505,20 +59466,6 @@
 	  [22.306567194930622, 114.18485641479491], // hung hom
 	  [22.34070831009231, 114.19249534606934]]
 	};
-	// modify this
-	
-	exports.default = _default;
-	;
-
-	(function () {
-	  if (typeof __REACT_HOT_LOADER__ === 'undefined') {
-	    return;
-	  }
-
-	  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/kyktommy/Desktop/pkmon_monitor/web/src/config.js');
-	})();
-
-	;
 
 /***/ },
 /* 333 */
@@ -59943,7 +59890,7 @@
 	
 	
 	// module
-	exports.push([module.id, ".pkmon-image:hover {\n  outline: 1px solid gold; \n}", ""]);
+	exports.push([module.id, ".pkmon-image {\n  width: 40px;\n  height: 40px;\n}\n\n.pkmon-image:hover {\n  outline: 1px solid gold; \n}", ""]);
 	
 	// exports
 
