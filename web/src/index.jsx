@@ -20,16 +20,18 @@ function getAllPkmonsInAllLocations() {
   }
 }
 
-function getAllPkmonsInAllLocationsAsync() {
+// start long pulling
+getAllPkmonsInAllLocations()
+setInterval(() => {
   getAllPkmonsInAllLocations()
-  autorunAsync(() => {
-    getAllPkmonsInAllLocations()
-    // next loop
-    getAllPkmonsInAllLocationsAsync()
-  }, config.REFRESH_TIME)
-}
+}, config.REFRESH_TIME)
 
-getAllPkmonsInAllLocationsAsync()
+// track nearby
+appState.requestNearByPks()
+autorunAsync(() => {
+  const location = appState.nearByLocation
+  appState.getAllPkmons(0)
+})
 
 render(
   <AppContainer>

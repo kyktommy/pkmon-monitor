@@ -7,10 +7,6 @@ import Alert from 'react-s-alert';
 import Clipboard from 'clipboard'
 import appState from './AppState';
 
-function transformLatlng({lat, lng}) {
-  return { lat: lat-22.28617779205381, lng: lng+-0.00011867684 }
-}
-
 // clip location
 const clipPkMonLocation = new Clipboard('.pkmon')
 clipPkMonLocation.on('success', (e) => {
@@ -64,36 +60,33 @@ class App extends Component {
 
   render() {
     const { locations, results, lastUpdates, settings, unqiuePks } = appState
+    const { nearByPks, requestNearBySuccess, requestNearByPks } = appState
     const { selectedLocationIdx } = settings
-
+    
     if (results.length <= 0) return <div>Loading...</div>
 
     return (
       <div>
         <div>
           <div className='pkmon-header'>
-            <select onChange={(e) => appState.setLocationIdx(e.target.value)}>
-              <option selected={selectedLocationIdx == -1} value="-1">
-                  Select ALL
-              </option>
-              { 
-                locations.map((l, i) => 
-                  <option 
-                    key={i} 
-                    selected={selectedLocationIdx == i} 
-                    value={i}
-                  >
-                    {l.name}
-                  </option>
-                )
-              }
+            <select className='full-width' value={selectedLocationIdx} onChange={(e) => appState.setLocationIdx(e.target.value)}>
+              <option value="-1"> Select ALL Pks </option>
+              { locations.map((l, i) => <option key={i} value={i} >{l.name}</option>) }
             </select>
           </div>
           <PKList pks={unqiuePks} />
         </div>
-        <hr style={{margin: '20px 0'}}/>
+        <hr style={{margin: '20px 0'}} />
+        <div>
+          <div className='pkmon-header'>
+            <button className='full-width' onClick={() => appState.requestNearByPks()}>GET NEAR BY PKs</button>
+          </div>
+          { requestNearBySuccess && <PKList pks={nearByPks.result} /> }
+          { !requestNearBySuccess && <p className='text-center'>Loading...</p> }
+        </div>
+        <hr style={{margin: '20px 0'}} />
         <div className='pkmon-show-all-button-container'>
-          <button onClick={() => this.showAll = !this.showAll}>
+          <button className='full-width' onClick={() => this.showAll = !this.showAll}>
             { this.showAll ? 'Hide All' : 'Show All' } 
           </button>
         </div>

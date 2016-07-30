@@ -2,6 +2,16 @@ select, button, input {
   font-size: 1.2rem;
 }
 
+.full-width {
+  display: block;
+  width: 100%;
+  height: 3.2rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
 .pkmon-header {
   text-align: center;
   margin-bottom: 20px;
@@ -12,7 +22,7 @@ select, button, input {
   height: 40px;
 }
 
-.pkmon-image:hover {
+.pkmon-image:hover, .pkmon-image:active {
   outline: 1px solid gold; 
 }
 
