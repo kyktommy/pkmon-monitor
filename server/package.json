@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "node index.js",
     "start": "node server.js",
     "copy:static": "rm -rf static && cp -r ../web/static static",
     "build": "npm run copy:static && babel index.js --out-file server.js",
