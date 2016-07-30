@@ -47,7 +47,7 @@ const LocationPKInfo = (props) => {
   return (
     <div>
       <div>
-        { location[0] }, { location[1] }
+        { location.name }
       </div>
       <PKList pks={pks} />
     </div>
@@ -59,7 +59,8 @@ class App extends Component {
   @observable showAll = false
 
   render() {
-    const { locations, results, lastUpdates, unqiuePks } = appState
+    const { locations, results, lastUpdates, settings, unqiuePks } = appState
+    const { selectedLocationIdx } = settings
 
     if (results.length <= 0) return <div>Loading...</div>
 
@@ -67,6 +68,22 @@ class App extends Component {
       <div>
         <div>
           <h5>All PK</h5>
+          <select onChange={(e) => appState.setLocationIdx(e.target.value)}>
+            <option selected={selectedLocationIdx == -1} value="-1">
+                Select ALL
+            </option>
+            { 
+              locations.map((l, i) => 
+                <option 
+                  key={i} 
+                  selected={selectedLocationIdx == i} 
+                  value={i}
+                >
+                  {l.name}
+                </option>
+              )
+            }
+          </select>
           <PKList pks={unqiuePks} />
         </div>
         <hr />

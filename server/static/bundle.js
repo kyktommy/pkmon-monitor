@@ -71,11 +71,11 @@
 	
 	var _config2 = _interopRequireDefault(_config);
 	
-	__webpack_require__(333);
+	__webpack_require__(334);
 	
-	__webpack_require__(337);
+	__webpack_require__(338);
 	
-	__webpack_require__(339);
+	__webpack_require__(340);
 	
 	var _AppState = __webpack_require__(308);
 	
@@ -22498,9 +22498,7 @@
 	    _react2.default.createElement(
 	      'div',
 	      null,
-	      location[0],
-	      ', ',
-	      location[1]
+	      location.name
 	    ),
 	    _react2.default.createElement(PKList, { pks: pks })
 	  );
@@ -22531,7 +22529,9 @@
 	      var locations = _AppState2.default.locations;
 	      var results = _AppState2.default.results;
 	      var lastUpdates = _AppState2.default.lastUpdates;
+	      var settings = _AppState2.default.settings;
 	      var unqiuePks = _AppState2.default.unqiuePks;
+	      var selectedLocationIdx = settings.selectedLocationIdx;
 	
 	
 	      if (results.length <= 0) return _react2.default.createElement(
@@ -22550,6 +22550,28 @@
 	            'h5',
 	            null,
 	            'All PK'
+	          ),
+	          _react2.default.createElement(
+	            'select',
+	            { onChange: function onChange(e) {
+	                return _AppState2.default.setLocationIdx(e.target.value);
+	              } },
+	            _react2.default.createElement(
+	              'option',
+	              { selected: selectedLocationIdx == -1, value: '-1' },
+	              'Select ALL'
+	            ),
+	            locations.map(function (l, i) {
+	              return _react2.default.createElement(
+	                'option',
+	                {
+	                  key: i,
+	                  selected: selectedLocationIdx == i,
+	                  value: i
+	                },
+	                l.name
+	              );
+	            })
 	          ),
 	          _react2.default.createElement(PKList, { pks: unqiuePks })
 	        ),
@@ -41364,13 +41386,17 @@
 	  value: true
 	});
 	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _desc, _value, _class, _descriptor, _descriptor2, _descriptor3;
+	var _desc, _value, _class, _descriptor, _descriptor2, _descriptor3, _descriptor4;
 	
 	var _mobx = __webpack_require__(185);
+	
+	var _mobx2 = _interopRequireDefault(_mobx);
 	
 	var _axios = __webpack_require__(309);
 	
@@ -41383,6 +41409,10 @@
 	var _config = __webpack_require__(332);
 	
 	var _config2 = _interopRequireDefault(_config);
+	
+	var _store = __webpack_require__(333);
+	
+	var _store2 = _interopRequireDefault(_store);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -41440,17 +41470,25 @@
 	    _initDefineProp(this, 'results', _descriptor2, this);
 	
 	    _initDefineProp(this, 'lastUpdates', _descriptor3, this);
+	
+	    _initDefineProp(this, 'settings', _descriptor4, this);
 	  }
 	
 	  _createClass(AppState, [{
+	    key: 'setLocationIdx',
+	    value: function setLocationIdx(idx) {
+	      this.settings.selectedLocationIdx = idx;
+	      _store2.default.set('settings', _mobx2.default.toJS(this.settings));
+	    }
+	  }, {
 	    key: 'getAllPkmons',
 	    value: function getAllPkmons(idx) {
 	      var _this = this;
 	
-	      var _locations$idx = _slicedToArray(this.locations[idx], 2);
+	      var _locations$idx$loc = _slicedToArray(this.locations[idx].loc, 2);
 	
-	      var lat = _locations$idx[0];
-	      var lng = _locations$idx[1];
+	      var lat = _locations$idx$loc[0];
+	      var lng = _locations$idx$loc[1];
 	
 	      _axios2.default.get(_config2.default.GET_PKMONS_API + '/' + lat + '/' + lng).then(function (_ref) {
 	        var data = _ref.data;
@@ -41464,14 +41502,23 @@
 	  }, {
 	    key: 'unqiuePks',
 	    get: function get() {
+	      var selectedLocationIdx = this.settings.selectedLocationIdx;
+	
 	      var pks = this.results.filter(function (pk) {
 	        return pk;
-	      });
-	      if (pks.length > 0) {
-	        var flattened = this.results.reduce(function (sum, item) {
+	      }); // filter undefined
+	
+	      var results = void 0;
+	      if (selectedLocationIdx == -1) {
+	        results = this.results.reduce(function (sum, item) {
 	          return sum.concat(item.concat([]));
 	        }, []);
-	        return _lodash2.default.uniqBy(flattened, function (pk) {
+	      } else {
+	        results = this.results[selectedLocationIdx];
+	      }
+	
+	      if (pks.length > 0) {
+	        return _lodash2.default.uniqBy(results, function (pk) {
 	          return pk.pokemonId;
 	        });
 	      }
@@ -41495,7 +41542,13 @@
 	  initializer: function initializer() {
 	    return new Array(this.locations.length);
 	  }
-	}), _applyDecoratedDescriptor(_class.prototype, 'unqiuePks', [_mobx.computed], Object.getOwnPropertyDescriptor(_class.prototype, 'unqiuePks'), _class.prototype)), _class);
+	}), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, 'settings', [_mobx.observable], {
+	  enumerable: true,
+	  initializer: function initializer() {
+	    return _extends({
+	      selectedLocationIdx: -1 }, _store2.default.get('settings'));
+	  }
+	}), _applyDecoratedDescriptor(_class.prototype, 'unqiuePks', [_mobx.computed], Object.getOwnPropertyDescriptor(_class.prototype, 'unqiuePks'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, 'setLocationIdx', [_mobx.action], Object.getOwnPropertyDescriptor(_class.prototype, 'setLocationIdx'), _class.prototype)), _class);
 	exports.default = new AppState();
 
 /***/ },
@@ -59449,35 +59502,233 @@
 	exports.default = {
 	  GET_PKMONS_API: API,
 	  REFRESH_TIME: 1 * 60 * 1000,
-	  LOCATIONS: [[22.320343743143248, 114.16914939880371], // hk mk east
-	  [22.305018737102014, 114.17163848876953], // jordan
-	  [22.298705615987014, 114.17245388031006], // tst
-	  [22.286078517966256, 114.15215492248535], // sheung wan
-	  [22.2776598189047, 114.17275428771973], // wan chai
-	  [22.323599097711785, 114.21360969543457], // kowloon bay
-	  [22.32220962639248, 114.2574691772461], // po lam
-	  [22.373968007511465, 114.1179084777832], // tsuen wan
-	  [22.446452940412026, 114.03486728668213], // yuen long
-	  [22.39382875106517, 113.97268295288086], // tuen mun
-	  [22.312125620053337, 114.22639846801758], // kwun tong
-	  [22.284013600962453, 114.21931743621826], // tai koo
-	  [22.38253962522458, 114.19283866882324], // shai tin
-	  [22.501773091353762, 114.12812232971191], // sheung shui
-	  [22.306567194930622, 114.18485641479491], // hung hom
-	  [22.34070831009231, 114.19249534606934]]
+	  LOCATIONS: [{ name: 'mk east', loc: [22.320343743143248, 114.16914939880371] }, // hk mk east
+	  { name: 'jordan', loc: [22.305018737102014, 114.17163848876953] }, // jordan
+	  { name: 'tst', loc: [22.298705615987014, 114.17245388031006] }, // tst
+	  { name: 'sheung wan', loc: [22.286078517966256, 114.15215492248535] }, // sheung wan
+	  { name: 'wan chai', loc: [22.2776598189047, 114.17275428771973] }, // wan chai
+	  { name: 'kowloon bay', loc: [22.323599097711785, 114.21360969543457] }, // kowloon bay
+	  { name: 'po lam', loc: [22.32220962639248, 114.2574691772461] }, // po lam
+	  { name: 'tsuen wan', loc: [22.373968007511465, 114.1179084777832] }, // tsuen wan
+	  { name: 'yuen long', loc: [22.446452940412026, 114.03486728668213] }, // yuen long
+	  { name: 'tuen mum', loc: [22.39382875106517, 113.97268295288086] }, // tuen mun
+	  { name: 'kwun tong', loc: [22.312125620053337, 114.22639846801758] }, // kwun tong
+	  { name: 'tai koo', loc: [22.284013600962453, 114.21931743621826] }, // tai koo
+	  { name: 'shai tin', loc: [22.38253962522458, 114.19283866882324] }, // shai tin
+	  { name: 'sheung shui', loc: [22.501773091353762, 114.12812232971191] }, // sheung shui
+	  { name: 'hung hom', loc: [22.306567194930622, 114.18485641479491] }, // hung hom
+	  { name: 'yellow god', loc: [22.34070831009231, 114.19249534606934] }]
 	};
 
 /***/ },
 /* 333 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global) {"use strict"
+	// Module export pattern from
+	// https://github.com/umdjs/umd/blob/master/returnExports.js
+	;(function (root, factory) {
+	    if (true) {
+	        // AMD. Register as an anonymous module.
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    } else if (typeof exports === 'object') {
+	        // Node. Does not work with strict CommonJS, but
+	        // only CommonJS-like environments that support module.exports,
+	        // like Node.
+	        module.exports = factory();
+	    } else {
+	        // Browser globals (root is window)
+	        root.store = factory();
+	  }
+	}(this, function () {
+		
+		// Store.js
+		var store = {},
+			win = (typeof window != 'undefined' ? window : global),
+			doc = win.document,
+			localStorageName = 'localStorage',
+			scriptTag = 'script',
+			storage
+	
+		store.disabled = false
+		store.version = '1.3.20'
+		store.set = function(key, value) {}
+		store.get = function(key, defaultVal) {}
+		store.has = function(key) { return store.get(key) !== undefined }
+		store.remove = function(key) {}
+		store.clear = function() {}
+		store.transact = function(key, defaultVal, transactionFn) {
+			if (transactionFn == null) {
+				transactionFn = defaultVal
+				defaultVal = null
+			}
+			if (defaultVal == null) {
+				defaultVal = {}
+			}
+			var val = store.get(key, defaultVal)
+			transactionFn(val)
+			store.set(key, val)
+		}
+		store.getAll = function() {}
+		store.forEach = function() {}
+	
+		store.serialize = function(value) {
+			return JSON.stringify(value)
+		}
+		store.deserialize = function(value) {
+			if (typeof value != 'string') { return undefined }
+			try { return JSON.parse(value) }
+			catch(e) { return value || undefined }
+		}
+	
+		// Functions to encapsulate questionable FireFox 3.6.13 behavior
+		// when about.config::dom.storage.enabled === false
+		// See https://github.com/marcuswestin/store.js/issues#issue/13
+		function isLocalStorageNameSupported() {
+			try { return (localStorageName in win && win[localStorageName]) }
+			catch(err) { return false }
+		}
+	
+		if (isLocalStorageNameSupported()) {
+			storage = win[localStorageName]
+			store.set = function(key, val) {
+				if (val === undefined) { return store.remove(key) }
+				storage.setItem(key, store.serialize(val))
+				return val
+			}
+			store.get = function(key, defaultVal) {
+				var val = store.deserialize(storage.getItem(key))
+				return (val === undefined ? defaultVal : val)
+			}
+			store.remove = function(key) { storage.removeItem(key) }
+			store.clear = function() { storage.clear() }
+			store.getAll = function() {
+				var ret = {}
+				store.forEach(function(key, val) {
+					ret[key] = val
+				})
+				return ret
+			}
+			store.forEach = function(callback) {
+				for (var i=0; i<storage.length; i++) {
+					var key = storage.key(i)
+					callback(key, store.get(key))
+				}
+			}
+		} else if (doc && doc.documentElement.addBehavior) {
+			var storageOwner,
+				storageContainer
+			// Since #userData storage applies only to specific paths, we need to
+			// somehow link our data to a specific path.  We choose /favicon.ico
+			// as a pretty safe option, since all browsers already make a request to
+			// this URL anyway and being a 404 will not hurt us here.  We wrap an
+			// iframe pointing to the favicon in an ActiveXObject(htmlfile) object
+			// (see: http://msdn.microsoft.com/en-us/library/aa752574(v=VS.85).aspx)
+			// since the iframe access rules appear to allow direct access and
+			// manipulation of the document element, even for a 404 page.  This
+			// document can be used instead of the current document (which would
+			// have been limited to the current path) to perform #userData storage.
+			try {
+				storageContainer = new ActiveXObject('htmlfile')
+				storageContainer.open()
+				storageContainer.write('<'+scriptTag+'>document.w=window</'+scriptTag+'><iframe src="/favicon.ico"></iframe>')
+				storageContainer.close()
+				storageOwner = storageContainer.w.frames[0].document
+				storage = storageOwner.createElement('div')
+			} catch(e) {
+				// somehow ActiveXObject instantiation failed (perhaps some special
+				// security settings or otherwse), fall back to per-path storage
+				storage = doc.createElement('div')
+				storageOwner = doc.body
+			}
+			var withIEStorage = function(storeFunction) {
+				return function() {
+					var args = Array.prototype.slice.call(arguments, 0)
+					args.unshift(storage)
+					// See http://msdn.microsoft.com/en-us/library/ms531081(v=VS.85).aspx
+					// and http://msdn.microsoft.com/en-us/library/ms531424(v=VS.85).aspx
+					storageOwner.appendChild(storage)
+					storage.addBehavior('#default#userData')
+					storage.load(localStorageName)
+					var result = storeFunction.apply(store, args)
+					storageOwner.removeChild(storage)
+					return result
+				}
+			}
+	
+			// In IE7, keys cannot start with a digit or contain certain chars.
+			// See https://github.com/marcuswestin/store.js/issues/40
+			// See https://github.com/marcuswestin/store.js/issues/83
+			var forbiddenCharsRegex = new RegExp("[!\"#$%&'()*+,/\\\\:;<=>?@[\\]^`{|}~]", "g")
+			var ieKeyFix = function(key) {
+				return key.replace(/^d/, '___$&').replace(forbiddenCharsRegex, '___')
+			}
+			store.set = withIEStorage(function(storage, key, val) {
+				key = ieKeyFix(key)
+				if (val === undefined) { return store.remove(key) }
+				storage.setAttribute(key, store.serialize(val))
+				storage.save(localStorageName)
+				return val
+			})
+			store.get = withIEStorage(function(storage, key, defaultVal) {
+				key = ieKeyFix(key)
+				var val = store.deserialize(storage.getAttribute(key))
+				return (val === undefined ? defaultVal : val)
+			})
+			store.remove = withIEStorage(function(storage, key) {
+				key = ieKeyFix(key)
+				storage.removeAttribute(key)
+				storage.save(localStorageName)
+			})
+			store.clear = withIEStorage(function(storage) {
+				var attributes = storage.XMLDocument.documentElement.attributes
+				storage.load(localStorageName)
+				for (var i=attributes.length-1; i>=0; i--) {
+					storage.removeAttribute(attributes[i].name)
+				}
+				storage.save(localStorageName)
+			})
+			store.getAll = function(storage) {
+				var ret = {}
+				store.forEach(function(key, val) {
+					ret[key] = val
+				})
+				return ret
+			}
+			store.forEach = withIEStorage(function(storage, callback) {
+				var attributes = storage.XMLDocument.documentElement.attributes
+				for (var i=0, attr; attr=attributes[i]; ++i) {
+					callback(attr.name, store.deserialize(storage.getAttribute(attr.name)))
+				}
+			})
+		}
+	
+		try {
+			var testKey = '__storejs__'
+			store.set(testKey, testKey)
+			if (store.get(testKey) != testKey) { store.disabled = true }
+			store.remove(testKey)
+		} catch(e) {
+			store.disabled = true
+		}
+		store.enabled = !store.disabled
+		
+		return store
+	}));
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 334 */
+/***/ function(module, exports, __webpack_require__) {
+
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(334);
+	var content = __webpack_require__(335);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(336)(content, {});
+	var update = __webpack_require__(337)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -59494,10 +59745,10 @@
 	}
 
 /***/ },
-/* 334 */
+/* 335 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(335)();
+	exports = module.exports = __webpack_require__(336)();
 	// imports
 	
 	
@@ -59508,7 +59759,7 @@
 
 
 /***/ },
-/* 335 */
+/* 336 */
 /***/ function(module, exports) {
 
 	/*
@@ -59564,7 +59815,7 @@
 
 
 /***/ },
-/* 336 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -59816,16 +60067,16 @@
 
 
 /***/ },
-/* 337 */
+/* 338 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(338);
+	var content = __webpack_require__(339);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(336)(content, {});
+	var update = __webpack_require__(337)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -59842,10 +60093,10 @@
 	}
 
 /***/ },
-/* 338 */
+/* 339 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(335)();
+	exports = module.exports = __webpack_require__(336)();
 	// imports
 	
 	
@@ -59856,16 +60107,16 @@
 
 
 /***/ },
-/* 339 */
+/* 340 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(340);
+	var content = __webpack_require__(341);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(336)(content, {});
+	var update = __webpack_require__(337)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -59882,10 +60133,10 @@
 	}
 
 /***/ },
-/* 340 */
+/* 341 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(335)();
+	exports = module.exports = __webpack_require__(336)();
 	// imports
 	
 	
