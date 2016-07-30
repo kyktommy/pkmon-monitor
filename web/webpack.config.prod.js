@@ -2,7 +2,6 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-  devtool: 'source-map',
   entry: [
     './src/index'
   ],
@@ -14,6 +13,9 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       PRODUCTION: JSON.stringify(true),
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: { warnings: false }
     })
   ],
   resolve: {
@@ -27,6 +29,9 @@ module.exports = {
     }, {
       test: /\.css$/, 
       loader: 'style-loader!css-loader'
+    }, {
+      test: /\.(png|jpg)$/,
+      loader: 'url-loader'
     }]
   }
 };

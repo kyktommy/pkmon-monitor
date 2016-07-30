@@ -7,6 +7,7 @@ import config from './config'
 
 import 'react-s-alert/dist/s-alert-default.css'
 import 'react-s-alert/dist/s-alert-css-effects/slide.css'
+import './sprites.css'
 import './style.css'
 
 import appState from './AppState'
@@ -37,7 +38,7 @@ render(
   document.getElementById('root')
 );
 
-if (module.hot) {
+if (module.hot && !PRODUCTION) {
   module.hot.accept('./App', () => {
     const NextApp = require('./App').default;
 

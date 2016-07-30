@@ -39,9 +39,20 @@ class AppState {
     const [ lat, lng ] = this.locations[idx].loc
     axios.get(`${config.GET_PKMONS_API}/${lat}/${lng}`)
       .then(({data}) => {
-        this.results[idx] = lodash.uniqBy(data.pokemon, (pk) => pk.pokemonId)
+        this.results[idx] = this.toUnqiuePkmons(data.pokemon)
         this.lastUpdates[idx] = new Date()
       })
+  }
+
+  toUnqiuePkmons(pks) {
+    return lodash.chain(pks)
+      .uniqBy((pk) => pk.pokemonId)
+      .map((pk) => {
+        pk.latitude = pk.latitude-0.0001286387
+        pk.longitude = pk.longitude+0.000115123778
+        return pk;
+      })
+      .value()
   }
 }
 

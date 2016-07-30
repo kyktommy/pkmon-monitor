@@ -22,5 +22,6 @@ export default {
     { name: 'sheung shui', loc: [22.501773091353762,114.12812232971191] }, // sheung shui
     { name: 'hung hom', loc: [22.306567194930622,114.18485641479491] }, // hung hom
     { name: 'yellow god', loc: [22.34070831009231,114.19249534606934] }, // yellow god
+    { name: 'to kwa wan', loc: [22.31759449736751,114.18644428253174] }, // to kwa wan
   ]
 }

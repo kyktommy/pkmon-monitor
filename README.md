@@ -1,15 +1,15 @@
 #[Online Website https://pkmonitor.herokuapp.com/](https://pkmonitor.herokuapp.com/)
 
-#web deploy
+#web production
 
-1. node run build
-2. start server
+1. web => node run build
+2. server => node run build
+3. server => node start 
 
-#server
+#server develop
 
 1. npm install
-2. edit ip
-3. node index.js
+2. node run dev
 
 #web develop
 

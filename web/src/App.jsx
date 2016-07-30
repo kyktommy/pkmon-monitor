@@ -5,8 +5,11 @@ import DevTools from 'mobx-react-devtools';
 import moment from 'moment'
 import Alert from 'react-s-alert';
 import Clipboard from 'clipboard'
-
 import appState from './AppState';
+
+function transformLatlng({lat, lng}) {
+  return { lat: lat-22.28617779205381, lng: lng+-0.00011867684 }
+}
 
 // clip location
 const clipPkMonLocation = new Clipboard('.pkmon')
@@ -17,7 +20,8 @@ clipPkMonLocation.on('success', (e) => {
 
 const PKImage = (props) => {
   const { pkId } = props
-  return <img className='pkmon-image' src={`../images/${pkId}.png`} />
+  // return <img className='pkmon-image' src={`../images/${pkId}.png`} />
+  return <div className={`pkmon-${pkId}`} />
 }
 
 const PKList = (props) => {
@@ -67,27 +71,32 @@ class App extends Component {
     return (
       <div>
         <div>
-          <h5>All PK</h5>
-          <select onChange={(e) => appState.setLocationIdx(e.target.value)}>
-            <option selected={selectedLocationIdx == -1} value="-1">
-                Select ALL
-            </option>
-            { 
-              locations.map((l, i) => 
-                <option 
-                  key={i} 
-                  selected={selectedLocationIdx == i} 
-                  value={i}
-                >
-                  {l.name}
-                </option>
-              )
-            }
-          </select>
+          <div className='pkmon-header'>
+            <select onChange={(e) => appState.setLocationIdx(e.target.value)}>
+              <option selected={selectedLocationIdx == -1} value="-1">
+                  Select ALL
+              </option>
+              { 
+                locations.map((l, i) => 
+                  <option 
+                    key={i} 
+                    selected={selectedLocationIdx == i} 
+                    value={i}
+                  >
+                    {l.name}
+                  </option>
+                )
+              }
+            </select>
+          </div>
           <PKList pks={unqiuePks} />
         </div>
-        <hr />
-        <button onClick={() => this.showAll = !this.showAll}>Toggle Show All</button>
+        <hr style={{margin: '20px 0'}}/>
+        <div className='pkmon-show-all-button-container'>
+          <button onClick={() => this.showAll = !this.showAll}>
+            { this.showAll ? 'Hide All' : 'Show All' } 
+          </button>
+        </div>
         {
           this.showAll &&
           results.map((pks, i) => {
